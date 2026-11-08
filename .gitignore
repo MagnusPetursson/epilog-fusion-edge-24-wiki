@@ -1,0 +1,7 @@
+.venv
+__pycache__/
+node_modules/
+dist/
+qa/
+# Archived copies of manufacturer sources for the claim check; not redistributed.
+/research

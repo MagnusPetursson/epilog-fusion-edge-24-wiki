@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "font": "assets/font.ttf",
+  "files": {
+    "kit/audit.mjs": "20dc955ed68ad57f86ef55a33bb767e5012a02bf529cd5c3140ff89d449c223b",
+    "kit/canvas-painter.mjs": "1918db10279c9d9df87d7df52c7ed8c2de8acd0bbce214c8f2115a39e7f955ac",
+    "kit/gl-shared.mjs": "8c3773cf3e15844df332db3ba55af940186edb2227201e5839347ecc390c039c",
+    "kit/gl.mjs": "17a477411e0b9fcb8e84e718094eaefa6be2c0b7d6ce15ee03fe8e252944130a",
+    "kit/iso-kit.mjs": "6d3ecc725d30c3b0346da309cf61dfa5a65017c23620bbd4093009d4fb104018",
+    "kit/iso-kit.ts": "e9fc988c61a11bfac1f097e62419915ea86b2130ab091f1b50c0e019c907e253",
+    "kit/iso.css": "ef19bac5a42ba9be42b56b2c1cf7fc7e21d332a8060765e9ca1d987b8ab23924",
+    "kit/lathe.mjs": "a4e7e974b1a37e603ad2b76363b6f9815cc101dfff0ad277a5d4e8f1dc56fccb",
+    "kit/react/draw.tsx": "ff54d8accd862d468648941701e6e0530031d6a776058cd0e99d288ef406b662",
+    "kit/react/live.tsx": "cc7c38f1bd788f7c2bd1417b6d8f1bd8f8a90c2c7abcb41f6dd074703f93d153",
+    "kit/tube.mjs": "bcb3cc360f6d83e6a5753f4c464b4587ab7965028b05a5d58e285abce58667c9",
+    "kit/turn-audit.mjs": "e118b838c00621eb5d86409552b75b50d02c303eaedefc008146a7c62c2eaefd",
+    "kit/turn-build.mjs": "c2b96e40044b4698c69c472ef85572ae17a3b59de3b6da210884b9a5d0bbf6a3",
+    "kit/turn-fixed.mjs": "7429b46eb7673aefb6ed90adeaf130c1dafe8e32af038cbde24a04e693d13fc7",
+    "kit/turn.mjs": "cb4b530b5e1750ba0e4fd2367d5f25e00195c0136672aa2ecd665c0622ffd1a2",
+    "assets/font.ttf": "ae7b7855e115a5966d8b1b3f80f254ccc117ec86f9965e202ee2940453837280",
+    "licenses/anatomy-MIT.txt": "87c078ab9d90a3044f359e6b563d4e6afea7aa060897cf4f21618687b3856796",
+    "licenses/font-license.txt": "63d3ba759d12804c5b31a9d5940d855c1820d1f5999e6b0872eb1c7ff045fbc9"
+  }
+}
