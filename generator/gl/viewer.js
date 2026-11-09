@@ -626,6 +626,11 @@ function updateReadout() {
   if (scrub && !state.fault) { if (document.activeElement !== scrub) scrub.value = String(state.clock); timeLabel.textContent = `${fmt(state.clock)} / ${fmt(JOB.total)}`; }
 }
 function caption(n, text, todo = "") { capBeat.textContent = n; capText.textContent = text; capTodo.hidden = !todo; capTodo.textContent = todo; }
+let hintDone = false;
+const isHint = () => capText.textContent === D.READY || capText.textContent === D.READY_TOUCH;
+const idleCaption = () => caption("", hintDone ? "" : matchMedia("(pointer: coarse)").matches ? D.READY_TOUCH : D.READY);
+const endHint = () => { if (hintDone) return; hintDone = true; if (isHint()) { capText.classList.add("sbx-fade"); setTimeout(() => { capText.classList.remove("sbx-fade"); if (isHint()) capText.textContent = ""; }, 600); } };
+for (const ev of ["pointerdown", "wheel", "keydown"]) stage.addEventListener(ev, endHint, { passive: true, once: true });
 function showPhase(id) { const p = JOB.phases.find((x) => x.id === id); if (!p) return; caption(`Job · ${JOB.phases.indexOf(p) + 1}/${JOB.phases.length}`, p.text); if (phaseList) for (const li of phaseList.children) li.toggleAttribute("data-on", li.dataset.phase === id); status.textContent = p.text; }
 function setBeat(i) {
   const f = state.fault; state.beat = Math.max(0, Math.min(f.beats.length - 1, i)); state.beatT = 0; const b = f.beats[state.beat];
@@ -656,7 +661,7 @@ function setFault(id) {
   pause(); state.part = null; state.partTour = false; for (const b of partButtons) b.setAttribute("aria-pressed", "false");
   const f = FAULTS.find((x) => x.id === id) || null; state.fault = f;
   for (const b of faultButtons) b.setAttribute("aria-pressed", b.dataset.fault === id ? "true" : "false");
-  if (!f) { state.culprits = []; state.ghost = []; state.focus = false; state.cutGoal = 0; capNav.hidden = true; faultDetail.hidden = true; PUFFS.length = 0; FLAMES.length = 0; Object.assign(FXG, FX0()); G = POSE0(); P.lid = 0; caption("Ready", "Drag to orbit · wheel to zoom · shift-drag to pan · click a part to tour it · 1–9 stage a fault · L lid, C cutaway, E exploded · Job tab runs the demonstration."); dirtyParts = true; saveHashSoon(); run(); return; }
+  if (!f) { state.culprits = []; state.ghost = []; state.focus = false; state.cutGoal = 0; capNav.hidden = true; faultDetail.hidden = true; PUFFS.length = 0; FLAMES.length = 0; Object.assign(FXG, FX0()); G = POSE0(); P.lid = 0; idleCaption(); dirtyParts = true; saveHashSoon(); run(); return; }
   // reset to a clean start: fresh sheet at focus, head over the artwork, extraction flowing
   P = { ...POSE0(), tz: K.FOCUSED }; const [wx, wy] = toWorld(r.x0 - 18, r.y1); P.hx = wx; P.hy = wy; G = { ...P };
   Object.assign(FXS, FX0()); Object.assign(FXG, FX0()); FXG.ring = "run"; FXG.status = "Running"; state.mc = 0; state.motion = "hold"; state.faultFire = 0; state.lastPaint = null;
@@ -671,7 +676,7 @@ function showPart(id, fly = true) {
   for (const b of partButtons) b.setAttribute("aria-pressed", b.dataset.part === id ? "true" : "false");
   setGoal(camOf(t.cam)); caption(`Part · ${TOUR.indexOf(t) + 1}/${TOUR.length}`, `${t.name}. ${t.text}`); status.textContent = `${t.name}: ${t.text}`; dirtyParts = true; saveHashSoon(); run();
 }
-function clearPart() { state.part = null; state.partTour = false; state.culprits = []; state.focus = false; state.cutGoal = 0; for (const b of partButtons) b.setAttribute("aria-pressed", "false"); dirtyParts = true; caption("Ready", "Drag to orbit · wheel to zoom · shift-drag to pan · click a part to tour it · 1–9 stage a fault · L lid, C cutaway, E exploded · Job tab runs the demonstration."); run(); }
+function clearPart() { state.part = null; state.partTour = false; state.culprits = []; state.focus = false; state.cutGoal = 0; for (const b of partButtons) b.setAttribute("aria-pressed", "false"); dirtyParts = true; idleCaption(); run(); }
 function play() { if (state.fault) setFault(null); if (state.part) clearPart(); if (state.clock >= JOB.total) { state.clock = 0; replayJob(0); } state.running = true; runButton.setAttribute("aria-pressed", "true"); runLabel.textContent = "Pause"; showPhase(jobAt(state.clock).phase); run(); }
 function pause() { state.running = false; runButton?.setAttribute("aria-pressed", "false"); if (runLabel) runLabel.textContent = "Run"; }
 function seek(t) { if (state.fault) setFault(null); state.clock = Math.max(0, Math.min(JOB.total, t)); replayJob(state.clock); state.scrubbed = true; state.lastPaint = null; run(); }
@@ -689,6 +694,7 @@ function tick(now) {
   frame = busy && visible ? requestAnimationFrame(tick) : 0; if (!busy) last = 0;
 }
 function run() { if (!frame && visible) { last = 0; frame = requestAnimationFrame(tick); } }
+if (typeof ResizeObserver === "function") new ResizeObserver(() => run()).observe(stage);
 function resize() { const dpr = Math.min(2, devicePixelRatio || 1); const w = Math.max(1, Math.round(canvas.clientWidth * dpr)), h = Math.max(1, Math.round(canvas.clientHeight * dpr)); if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; gl.viewport(0, 0, w, h); } }
 new IntersectionObserver((e) => { visible = e[0].isIntersecting; if (visible) run(); }).observe(stage);
 document.addEventListener("visibilitychange", () => { visible = !document.hidden; if (visible) run(); });
@@ -809,7 +815,7 @@ window.addEventListener("hashchange", fromHash);
 window.__epilog = {
   fault: (id, beat = 0) => { setFault(id); if (beat) setBeat(beat); state.auto = false; },
   beat: (i) => { setBeat(i); state.auto = false; },
-  settle: (sec = BEAT_LEN, fps = 30) => { const n = Math.round(sec * fps); for (let i = 0; i < n; i++) { step(1 / fps); updateCamera(1 / fps); } updateGroups(); updateCamera(0); render(); updateCallouts(); updateReadout(); },
+  settle: (sec = BEAT_LEN, fps = 30) => { resize(); const n = Math.round(sec * fps); for (let i = 0; i < n; i++) { step(1 / fps); updateCamera(1 / fps); } updateGroups(); updateCamera(0); render(); updateCallouts(); updateReadout(); },
   job: (t) => { setFault(null); seek(t); step(0); updateGroups(); updateCamera(0); render(); },
   play: (speed = 1) => { SPEED = speed; seek(0); play(); },
   frame: (dt = 1 / 24) => { resize(); step(dt); updateCamera(dt); render(); updateCallouts(); updateReadout(); },
@@ -842,7 +848,7 @@ function cross3(a, b) { return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * 
 
 // ---------------------------------------------------------------- start
 readPalette(); sheetReset(false); drawScreen(); updateGroups(); setGoal(camOf(VIEWS.whole.cam), true);
-caption("Ready", "Drag to orbit · wheel to zoom · shift-drag to pan · click a part to tour it · 1–9 stage a fault · L lid, C cutaway, E exploded · Job tab runs the demonstration.");
+idleCaption();
 if (phaseList) for (const li of phaseList.children) li.addEventListener("click", () => { const p = JOB.phases.find((x) => x.id === li.dataset.phase); if (p) { takeOver(); pause(); seek(p.t + 0.01); } });
 document.fonts?.ready.then(() => { drawScreen(); drawLogos(); run(); });
 if (document.body.classList.contains("embed")) stage.setAttribute("tabindex", "0");

@@ -16,7 +16,7 @@ export function glData() {
   if (!audit.bodyMatches) throw new Error("Envelope audit failed: " + JSON.stringify(audit));
   const K = { W: M.W, D: M.D, H: M.H, BED: M.BED, FP: M.FP, STOCK: M.STOCK, HOME: M.HOME, HINGE: M.HINGE, CONE_TIP: M.CONE_TIP, PED: M.PED, TOPZ0: M.topZ(0),
     FOCUSED: S.FOCUSED, LOW: S.LOW, DISPLAY: M.DISPLAY, LOGO: M.LOGO, LIDLOGO: M.LIDLOGO, SIDELOGO: M.SIDELOGO };
-  return { model, audit, K, JOB: S.JOB, FAULTS: S.FAULTS, TOUR: S.TOUR, VIEWS: S.VIEWS, BEAT_LEN: S.BEAT_LEN };
+  return { model, audit, K, JOB: S.JOB, FAULTS: S.FAULTS, TOUR: S.TOUR, VIEWS: S.VIEWS, BEAT_LEN: S.BEAT_LEN, READY: "Drag to orbit · scroll to zoom · shift-drag to pan", READY_TOUCH: "Drag to orbit · pinch to zoom" };
 }
 
 const ICON = {
@@ -47,7 +47,7 @@ export function glPage({ theme = "dark", nav = "", shellCss = "", fonts = "" } =
 <section class="sbx-view" aria-label="3D viewer">
 <div class="sb-gl-stage" tabindex="0" role="application" aria-label="Epilog Fusion Edge 24 laser cutter in 3D. Drag or arrow keys to orbit, wheel or plus and minus to zoom, shift-drag or shift-arrows to pan. Click a part to tour it. C cutaway, E exploded, L lid. 1 to 9 stage a fault, N and P step through it, Escape closes it."><canvas aria-hidden="true"></canvas><div class="sbx-callouts" data-callouts aria-hidden="true"></div><div class="sb-gl-fallback" hidden>This browser has no WebGL2. The pages carry the same content as text and figures.</div><span class="sb-sr" role="status" aria-live="polite" data-status></span></div>
 <header class="sbx-head"><h1>Epilog Fusion Edge 24</h1><span class="sbx-meta">3D teaching model · millimetres · Z up · schematic interior</span><output class="sbx-readout" data-readout>idle</output></header>
-<footer class="sbx-cap"><span class="sbx-cap-n" data-beat>Ready</span><div class="sbx-cap-body"><p class="sbx-cap-text" data-caption></p><p class="sbx-cap-todo" data-todo hidden></p></div><div class="sbx-cap-nav" data-beatnav hidden><button type="button" data-beat-prev aria-label="Previous step" aria-keyshortcuts="P">‹ Prev</button><button type="button" data-beat-replay>Replay</button><button type="button" data-beat-auto aria-pressed="true" title="Advance steps automatically">Auto</button><button type="button" data-beat-next aria-label="Next step" aria-keyshortcuts="N">Next ›</button><button type="button" data-beat-close aria-keyshortcuts="Escape">Close</button></div></footer>
+<footer class="sbx-cap"><span class="sbx-cap-n" data-beat></span><div class="sbx-cap-body"><p class="sbx-cap-text" data-caption></p><p class="sbx-cap-todo" data-todo hidden></p></div><div class="sbx-cap-nav" data-beatnav hidden><button type="button" data-beat-prev aria-label="Previous step" aria-keyshortcuts="P">‹ Prev</button><button type="button" data-beat-replay>Replay</button><button type="button" data-beat-auto aria-pressed="true" title="Advance steps automatically">Auto</button><button type="button" data-beat-next aria-label="Next step" aria-keyshortcuts="N">Next ›</button><button type="button" data-beat-close aria-keyshortcuts="Escape">Close</button></div></footer>
 <button type="button" class="sbx-drawer-btn" data-drawer-toggle aria-expanded="true" aria-controls="sbx-inspector">Inspector</button>
 </section>
 <aside class="sbx-inspector" id="sbx-inspector" aria-label="Inspector">
@@ -91,6 +91,7 @@ ${field("az", "Azimuth", -180, 180, 0.5, "°")}${field("el", "Elevation", -10, 8
 </aside>
 </div>`;
   const glbar = `<style>
+.sbx-cap-n:empty{display:none}.sbx-cap-text.sbx-fade{opacity:0;transition:opacity .5s}
 .sb-glbar{box-sizing:border-box;height:64px;padding:0 24px;border-bottom:1.5px solid var(--anatomy-strong);background:var(--anatomy-page);position:relative;z-index:30}
 .sb-glbar .sb-mast{margin:0;height:100%;container-type:normal}
 .sb-glbar .sb-mast-top{height:100%;padding:0;align-items:center;border:0}
